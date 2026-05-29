@@ -1,0 +1,65 @@
+import time
+import logging
+import os
+
+from prometheus_client import REGISTRY, start_http_server
+
+from .config import PiholeConfig
+from .client import PiholeClient
+from .logger import setup_logging
+
+from .metrics import (
+    SummaryMetrics,
+    BlockingMetrics,
+    TopAdsDomainsMetrics,
+    TopDomainsMetrics,
+    UpstreamMetrics,
+)
+
+class MetricsStrategyRegistry:
+
+    def __init__(self):
+        self._strategies: list[MetricsStrategy] = []
+    
+    def register(self, strategy: MetricsStrategy) -> None:
+        self._strategies.append(strategy) 
+    
+    def collect_all(self):
+        for strategy in self._strategies:
+            try:
+                yield from strategy.collect()
+            except Exception as ex:
+                pass
+
+class PiholeCollector:
+    def __init__(self, registry: MetricsStrategyRegistry):
+        self._registry = registry
+    
+    def collect(self) -> Iterator[Metric]:
+        yield from self._registry.collect_all()
+    
+if __name__ == "__main__":
+    setup_logging()
+
+    protocol = os.environ.get("PIHOLE_PROTOCOL", "http")
+    hostname = os.environ.get("PIHOLE_HOSTNAME", "localhost")
+    port = os.environ.get("PIHOLE_PORT", "8080")
+    password = os.environ.get("PIHOLE_PASSWORD", "randompassword")
+
+    config = PiholeConfig(
+        base_url=f"{protocol}://{hostname}:{port}/api",
+        password=password,
+        verify_ssl=True,
+        session_buffer_seconds=60
+    )
+
+    client = PiholeClient(config)
+
+    registry = MetricsStrategyRegistry()
+    registry.register(SummaryMetrics(client=client))
+    registry.register(BlockingMetrics(client=client))
+    registry.register(TopAdsDomainsMetrics(client=client))
+    registry.register(TopDomainsMetrics(client=client))
+    registry.register(UpstreamMetrics(client=client))
+    REGISTRY.register(PiholeCollector(registry))
+    start_http_server(9617)
