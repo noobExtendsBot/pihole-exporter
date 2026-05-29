@@ -1,14 +1,16 @@
+import logging
 import time
+from typing import Any, Optional
+
 import requests
 import urllib3
-from typing import Optional, Any
-import logging
 
 from .config import PiholeConfig
 from .exceptions import BadAuthError
 from .models import AuthResponse
 
 logger = logging.getLogger(__name__)
+
 
 class PiholeClient:
 
@@ -25,16 +27,12 @@ class PiholeClient:
         return f"{self._config.base_url}{path}"
 
     def _is_session_valid(self) -> bool:
-        return bool(self._sid) and (
-            time.monotonic() < self._sid_expires_at - self._config.session_buffer_seconds
-        )
+        return bool(self._sid) and (time.monotonic() < self._sid_expires_at - self._config.session_buffer_seconds)
 
     def authenticate(self) -> None:
         resp = self._http.post(
-            self._url("/auth"),
-            json={"password": self._config.password},
-            timeout=self._config.timeout
-            )
+            self._url("/auth"), json={"password": self._config.password}, timeout=self._config.timeout
+        )
         if resp.status_code == 401:
             logger.warning("Check your auth variables")
             raise BadAuthError
@@ -43,7 +41,7 @@ class PiholeClient:
         self._sid = auth.session.sid
         self._sid_expires_at = time.monotonic() + auth.session.validity
         self._http.headers.update({"X-FTL-SID": self._sid})
-    
+
     def get(self, path: str) -> dict:
         if not self._is_session_valid():
             self.authenticate()

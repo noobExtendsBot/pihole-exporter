@@ -1,8 +1,9 @@
-from pydantic import BaseModel, Field
-from typing import Optional, List, Dict
+from typing import Dict, List, Optional
 
+from pydantic import BaseModel, Field
 
 # --- Auth ---
+
 
 class SessionInfo(BaseModel):
     sid: str
@@ -15,6 +16,7 @@ class AuthResponse(BaseModel):
 
 
 # --- Stats: Summary ---
+
 
 class QueryTypes(BaseModel):
     A: int = 0
@@ -105,6 +107,7 @@ class SummaryResponse(BaseModel):
 
 # --- Stats: Upstreams ---
 
+
 class UpstreamStatistics(BaseModel):
     response: float
     variance: float
@@ -126,6 +129,7 @@ class UpstreamsResponse(BaseModel):
 
 # --- Stats: Top Domains ---
 
+
 class TopDomainEntry(BaseModel):
     domain: str
     count: int
@@ -138,6 +142,7 @@ class TopDomainsResponse(BaseModel):
 
 
 # --- Stats: Top Clients ---
+
 
 class TopClientEntry(BaseModel):
     ip: str
@@ -153,17 +158,20 @@ class TopClientsResponse(BaseModel):
 
 # --- Stats: Query Types ---
 
+
 class QueryTypesResponse(BaseModel):
     types: QueryTypes
 
 
 # --- Stats: Recent Blocked ---
 
+
 class RecentBlockedResponse(BaseModel):
     blocked: List[str]
 
 
 # --- Stats: Database Summary ---
+
 
 class DatabaseSummaryResponse(BaseModel):
     sum_queries: int
@@ -173,6 +181,7 @@ class DatabaseSummaryResponse(BaseModel):
 
 
 # --- History ---
+
 
 class HistoryEntry(BaseModel):
     timestamp: float
@@ -187,6 +196,7 @@ class HistoryResponse(BaseModel):
 
 
 # --- History: Clients ---
+
 
 class ClientHistoryInfo(BaseModel):
     name: Optional[str] = None
@@ -204,6 +214,7 @@ class ClientHistoryResponse(BaseModel):
 
 
 # --- Info: System ---
+
 
 class RAMInfo(BaseModel):
     model_config = {"populate_by_name": True}
@@ -262,6 +273,7 @@ class SystemResponse(BaseModel):
 
 
 # --- Info: FTL ---
+
 
 class FTLDomainCount(BaseModel):
     total: int
@@ -341,6 +353,7 @@ class FTLResponse(BaseModel):
 
 # --- Info: Sensors ---
 
+
 class TempReading(BaseModel):
     name: Optional[str] = None
     value: float
@@ -368,6 +381,7 @@ class SensorsResponse(BaseModel):
 
 
 # --- Info: Live Metrics (DNS/DHCP) ---
+
 
 class CacheContentCount(BaseModel):
     valid: int
@@ -435,6 +449,7 @@ class InfoMetricsResponse(BaseModel):
 
 
 # --- DNS Blocking ---
+
 
 class BlockingResponse(BaseModel):
     blocking: str

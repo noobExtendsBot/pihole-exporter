@@ -1,29 +1,29 @@
-import time
 import logging
 import os
+import time
 
 from prometheus_client import REGISTRY, start_http_server
 
-from .config import PiholeConfig
 from .client import PiholeClient
+from .config import PiholeConfig
 from .logger import setup_logging
-
 from .metrics import (
-    SummaryMetrics,
     BlockingMetrics,
+    SummaryMetrics,
     TopAdsDomainsMetrics,
     TopDomainsMetrics,
     UpstreamMetrics,
 )
 
+
 class MetricsStrategyRegistry:
 
     def __init__(self):
         self._strategies: list[MetricsStrategy] = []
-    
+
     def register(self, strategy: MetricsStrategy) -> None:
-        self._strategies.append(strategy) 
-    
+        self._strategies.append(strategy)
+
     def collect_all(self):
         for strategy in self._strategies:
             try:
@@ -31,13 +31,15 @@ class MetricsStrategyRegistry:
             except Exception as ex:
                 pass
 
+
 class PiholeCollector:
     def __init__(self, registry: MetricsStrategyRegistry):
         self._registry = registry
-    
+
     def collect(self) -> Iterator[Metric]:
         yield from self._registry.collect_all()
-    
+
+
 if __name__ == "__main__":
     setup_logging()
 
@@ -47,10 +49,7 @@ if __name__ == "__main__":
     password = os.environ.get("PIHOLE_PASSWORD", "randompassword")
 
     config = PiholeConfig(
-        base_url=f"{protocol}://{hostname}:{port}/api",
-        password=password,
-        verify_ssl=True,
-        session_buffer_seconds=60
+        base_url=f"{protocol}://{hostname}:{port}/api", password=password, verify_ssl=True, session_buffer_seconds=60
     )
 
     client = PiholeClient(config)
