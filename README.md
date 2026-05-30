@@ -4,7 +4,7 @@
 
 # pihole-exporter for Prometheus
 
-![Dashboard](https://raw.githubusercontent.com/noobExtendsBot/pihole-exporter/master/dashboard.png)
+![Dashboard](https://raw.githubusercontent.com/noobExtendsBot/pihole-exporter/refs/heads/master/dashboard.png)
 
 This project is inspired by [eko/pihole-exporter](https://github.com/eko/pihole-exporter) to support new version of pihole.
 
