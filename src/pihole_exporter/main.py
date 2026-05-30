@@ -1,6 +1,4 @@
-import logging
 import os
-import time
 from typing import Iterator
 
 from prometheus_client import REGISTRY, start_http_server
@@ -43,13 +41,15 @@ class PiholeCollector:
         yield from self._registry.collect_all()
 
 
-if __name__ == "__main__":
-    setup_logging()
-
+def main() -> None:
+    # get you ENV ready
     protocol = os.environ.get("PIHOLE_PROTOCOL", "http")
     hostname = os.environ.get("PIHOLE_HOSTNAME", "localhost")
     port = os.environ.get("PIHOLE_PORT", "8080")
     password = os.environ.get("PIHOLE_PASSWORD", "randompassword")
+
+    # setup logging
+    setup_logging()
 
     config = PiholeConfig(
         base_url=f"{protocol}://{hostname}:{port}/api", password=password, verify_ssl=True, session_buffer_seconds=60
@@ -65,3 +65,6 @@ if __name__ == "__main__":
     registry.register(UpstreamMetrics(client=client))
     REGISTRY.register(PiholeCollector(registry))
     start_http_server(9617)
+
+if __name__ == "__main__":
+    main()
