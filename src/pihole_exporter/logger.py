@@ -3,7 +3,7 @@ import logging.handlers
 from pathlib import Path
 
 
-def setup_logging(log_dir: str = "logs", level=logging.INFO) -> None:
+def setup_logging(log_dir: str = "logs", level: int = logging.INFO) -> None:
     log_path = Path(log_dir)
     log_path.mkdir(parents=True, exist_ok=True)
 
