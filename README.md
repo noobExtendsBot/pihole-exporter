@@ -4,9 +4,11 @@
 
 # pihole-exporter for Prometheus
 
-![Dashboard](https://raw.githubusercontent.com/noobExtendsBot/pihole-exporter/master/dashboard.jpg)
+![Dashboard](https://raw.githubusercontent.com/noobExtendsBot/pihole-exporter/master/dashboard.png)
 
 This project is inspired by [eko/pihole-exporter](https://github.com/eko/pihole-exporter) to support new version of pihole.
+
+The Docker image supports `amd64`, `arm64`, and `arm/v7`. Docker will pull the correct type own its own.
 
 ## Usage
 
