@@ -7,7 +7,7 @@ RUN pip install poetry
 COPY pyproject.toml poetry.lock README.md ./
 COPY src/ ./src/
 
-RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
+RUN apt-get update && apt-get install gcc && apt-get install -y --no-install-recommends build-essential \
     && poetry config virtualenvs.create false && poetry install --only main \
     && apt-get purge -y build-essential && apt-get autoremove -y && rm -rf /var/lib/apt/lists/*
 
