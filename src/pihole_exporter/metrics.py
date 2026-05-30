@@ -19,24 +19,23 @@ logger = logging.getLogger(__name__)
 
 class MetricsStrategy(ABC):
 
-    def __init__(self, client: PiholeClient):
+    def __init__(self, client: PiholeClient) -> None:
         self._client = client
-        # self._instance_label = instance_label
 
     @abstractmethod
-    def collect(self):
+    def collect(self) -> Iterator[Metric]:
         raise NotImplementedError
 
 
 class SummaryMetrics(MetricsStrategy):
-    def __init__(self, client: PiholeClient):
+    def __init__(self, client: PiholeClient) -> None:
         self._api_path = "/stats/summary"
         super().__init__(client)
 
-    def _collect(self):
+    def _collect(self) -> Iterator[Metric]:
         try:
-            data = self._client.get(self._api_path)
-            data = SummaryResponse.model_validate(data)
+            raw = self._client.get(self._api_path)
+            data = SummaryResponse.model_validate(raw)
         except Exception as ex:
             logger.error(f"When collecting data following exception occured: {ex}")
             return
@@ -96,7 +95,7 @@ class SummaryMetrics(MetricsStrategy):
 
         yield rtype
 
-    def collect(self):
+    def collect(self) -> Iterator[Metric]:
         try:
             yield from self._collect()
         except Exception as ex:
@@ -106,14 +105,14 @@ class SummaryMetrics(MetricsStrategy):
 
 class BlockingMetrics(MetricsStrategy):
 
-    def __init__(self, client: PiholeClient):
+    def __init__(self, client: PiholeClient) -> None:
         self._api_path = "/dns/blocking"
         super().__init__(client)
 
-    def _collect(self):
+    def _collect(self) -> Iterator[Metric]:
         try:
-            data = self._client.get(self._api_path)
-            data = BlockingResponse.model_validate(data)
+            raw = self._client.get(self._api_path)
+            data = BlockingResponse.model_validate(raw)
         except Exception as ex:
             logger.error(f"When fetching BlockingMetrics data from pihole following error occured: {ex}")
             return
@@ -124,7 +123,7 @@ class BlockingMetrics(MetricsStrategy):
             value=1 if data.blocking == "enabled" else 0,
         )
 
-    def collect(self):
+    def collect(self) -> Iterator[Metric]:
         try:
             yield from self._collect()
         except Exception as ex:
@@ -134,14 +133,14 @@ class BlockingMetrics(MetricsStrategy):
 
 class TopAdsDomainsMetrics(MetricsStrategy):
 
-    def __init__(self, client: PiholeClient):
+    def __init__(self, client: PiholeClient) -> None:
         self._api_path = "/stats/top_domains?blocked=true"
         super().__init__(client)
 
-    def _collect(self):
+    def _collect(self) -> Iterator[Metric]:
         try:
-            data = self._client.get(self._api_path)
-            data = TopDomainsResponse.model_validate(data)
+            raw = self._client.get(self._api_path)
+            data = TopDomainsResponse.model_validate(raw)
         except Exception as ex:
             logger.error(f"When fetching TopDomainsMetrics data from pihole following error occured: {ex}")
             return
@@ -153,7 +152,7 @@ class TopAdsDomainsMetrics(MetricsStrategy):
 
         yield top_queries
 
-    def collect(self):
+    def collect(self) -> Iterator[Metric]:
         try:
             yield from self._collect()
         except Exception as ex:
@@ -163,14 +162,14 @@ class TopAdsDomainsMetrics(MetricsStrategy):
 
 class TopDomainsMetrics(MetricsStrategy):
 
-    def __init__(self, client: PiholeClient):
+    def __init__(self, client: PiholeClient) -> None:
         self._api_path = "/stats/top_domains"
         super().__init__(client)
 
-    def _collect(self):
+    def _collect(self) -> Iterator[Metric]:
         try:
-            data = self._client.get(self._api_path)
-            data = TopDomainsResponse.model_validate(data)
+            raw = self._client.get(self._api_path)
+            data = TopDomainsResponse.model_validate(raw)
         except Exception as ex:
             logger.error(f"When fetching TopDomainsMetrics data from pihole following error occured: {ex}")
             return
@@ -182,7 +181,7 @@ class TopDomainsMetrics(MetricsStrategy):
 
         yield top_queries
 
-    def collect(self):
+    def collect(self) -> Iterator[Metric]:
         try:
             yield from self._collect()
         except Exception as ex:
@@ -192,14 +191,14 @@ class TopDomainsMetrics(MetricsStrategy):
 
 class UpstreamMetrics(MetricsStrategy):
 
-    def __init__(self, client: PiholeClient):
+    def __init__(self, client: PiholeClient) -> None:
         self._api_path = "/stats/upstreams"
         super().__init__(client)
 
-    def _collect(self):
+    def _collect(self) -> Iterator[Metric]:
         try:
-            data = self._client.get(self._api_path)
-            data = UpstreamsResponse.model_validate(data)
+            raw = self._client.get(self._api_path)
+            data = UpstreamsResponse.model_validate(raw)
         except Exception as ex:
             logger.error(f"When fetching UpstreamMetrics data from pihole following error occured: {ex}")
             return
@@ -214,7 +213,7 @@ class UpstreamMetrics(MetricsStrategy):
 
         yield upstream_queries
 
-    def collect(self) -> None:
+    def collect(self) -> Iterator[Metric]:
         try:
             yield from self._collect()
         except Exception as ex:
