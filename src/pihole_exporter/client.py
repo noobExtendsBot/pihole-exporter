@@ -6,7 +6,7 @@ import requests
 import urllib3
 
 from .config import PiholeConfig
-from .exceptions import BadAuthError
+from .exceptions import BadAuthError, PiholeRequestError
 from .models import AuthResponse
 
 logger = logging.getLogger(__name__)
@@ -21,9 +21,9 @@ class PiholeClient:
         self._http = requests.Session()
         self._http.verify = config.verify_ssl
         if not config.verify_ssl:
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestsWarning)
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-    def _url(self, path):
+    def _url(self, path: str) -> str:
         return f"{self._config.base_url}{path}"
 
     def _is_session_valid(self) -> bool:
@@ -42,11 +42,13 @@ class PiholeClient:
         self._sid_expires_at = time.monotonic() + auth.session.validity
         self._http.headers.update({"X-FTL-SID": self._sid})
 
-    def get(self, path: str) -> dict:
+    def get(self, path: str) -> dict[str, Any]:
         if not self._is_session_valid():
             self.authenticate()
         try:
             resp = self._http.get(self._url(path=path))
+            data: dict[str, Any] = resp.json()
+            return data
         except Exception as ex:
             logger.error(f"Could not process your request: {ex}")
-        return resp.json()
+            raise PiholeRequestError(f"Request to {path} failed", cause=ex) from ex
