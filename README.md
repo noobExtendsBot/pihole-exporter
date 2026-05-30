@@ -4,6 +4,42 @@
 
 # pihole-exporter for Prometheus
 
+![Dashboard](https://raw.githubusercontent.com/noobExtendsBot/pihole-exporter/master/dashboard.jpg)
+
+This project is inspired by [eko/pihole-exporter](https://github.com/eko/pihole-exporter) to support new version of pihole.
+
+## Usage
+
+### Docker
+
+```bash
+docker run -e PIHOLE_HOSTNAME=192.168.1.2 -e PIHOLE_PASSWORD=yourpassword -p 9617:9617 ghcr.io/noobextendsbot/pihole-exporter
+```
+
+### Docker Compose
+
+```yaml
+services:
+  pihole-exporter:
+    image: ghcr.io/noobextendsbot/pihole-exporter
+    ports:
+      - "9617:9617"
+    environment:
+      PIHOLE_PROTOCOL: http
+      PIHOLE_HOSTNAME: 192.168.1.2
+      PIHOLE_PORT: 8080
+      PIHOLE_PASSWORD: yourpassword
+```
+
+| Variable | Default | Description |
+|---|---|---|
+| `PIHOLE_PROTOCOL` | `http` | `http` or `https` |
+| `PIHOLE_HOSTNAME` | `localhost` | Pi-hole address |
+| `PIHOLE_PORT` | `8080` | Pi-hole port |
+| `PIHOLE_PASSWORD` | — | Pi-hole web password |
+
+Metrics are exposed on port `9617`.
+
 ## Available Metrics
 
 | Metric | Description |
