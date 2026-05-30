@@ -42,7 +42,7 @@ class PiholeCollector:
         yield from self._registry.collect_all()
 
 
-def main():
+def main() -> None:
     # get you ENV ready
     protocol = os.environ.get("PIHOLE_PROTOCOL", "http")
     hostname = os.environ.get("PIHOLE_HOSTNAME", "localhost")
