@@ -11,4 +11,4 @@ RUN poetry config virtualenvs.create false && poetry install --only main
 
 EXPOSE 9617
 
-CMD ["pihole_exporter"]
+CMD ["pihole-exporter"]
