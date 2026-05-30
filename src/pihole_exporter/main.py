@@ -1,14 +1,17 @@
 import logging
 import os
 import time
+from typing import Iterator
 
 from prometheus_client import REGISTRY, start_http_server
+from prometheus_client.metrics_core import Metric
 
 from .client import PiholeClient
 from .config import PiholeConfig
 from .logger import setup_logging
 from .metrics import (
     BlockingMetrics,
+    MetricsStrategy,
     SummaryMetrics,
     TopAdsDomainsMetrics,
     TopDomainsMetrics,
@@ -18,13 +21,13 @@ from .metrics import (
 
 class MetricsStrategyRegistry:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._strategies: list[MetricsStrategy] = []
 
     def register(self, strategy: MetricsStrategy) -> None:
         self._strategies.append(strategy)
 
-    def collect_all(self):
+    def collect_all(self) -> Iterator[Metric]:
         for strategy in self._strategies:
             try:
                 yield from strategy.collect()
@@ -33,7 +36,7 @@ class MetricsStrategyRegistry:
 
 
 class PiholeCollector:
-    def __init__(self, registry: MetricsStrategyRegistry):
+    def __init__(self, registry: MetricsStrategyRegistry) -> None:
         self._registry = registry
 
     def collect(self) -> Iterator[Metric]:
