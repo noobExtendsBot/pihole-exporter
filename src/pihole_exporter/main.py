@@ -41,6 +41,7 @@ class PiholeCollector:
     def collect(self) -> Iterator[Metric]:
         yield from self._registry.collect_all()
 
+
 if __name__ == "__main__":
     # get you ENV ready
     protocol = os.environ.get("PIHOLE_PROTOCOL", "http")
