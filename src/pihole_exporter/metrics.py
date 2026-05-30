@@ -145,12 +145,12 @@ class TopAdsDomainsMetrics(MetricsStrategy):
             logger.error(f"When fetching TopDomainsMetrics data from pihole following error occured: {ex}")
             return
 
-        top_queries = GaugeMetricFamily("pihole_top_ads", "Top blocked Ads domains", labels=["domain"])
+        top_ads = GaugeMetricFamily("pihole_top_ads", "Top blocked Ads domains", labels=["domain"])
 
         for entry in data.domains:
-            top_queries.add_metric([entry.domain], entry.count)
+            top_ads.add_metric([entry.domain], entry.count)
 
-        yield top_queries
+        yield top_ads
 
     def collect(self) -> Iterator[Metric]:
         try:
