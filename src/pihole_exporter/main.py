@@ -66,5 +66,6 @@ def main() -> None:
     REGISTRY.register(PiholeCollector(registry))
     start_http_server(9617)
 
+
 if __name__ == "__main__":
     main()
