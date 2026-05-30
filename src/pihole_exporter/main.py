@@ -1,4 +1,5 @@
 import os
+import time
 from typing import Iterator
 
 from prometheus_client import REGISTRY, start_http_server
@@ -40,8 +41,7 @@ class PiholeCollector:
     def collect(self) -> Iterator[Metric]:
         yield from self._registry.collect_all()
 
-
-def main() -> None:
+if __name__ == "__main__":
     # get you ENV ready
     protocol = os.environ.get("PIHOLE_PROTOCOL", "http")
     hostname = os.environ.get("PIHOLE_HOSTNAME", "localhost")
@@ -65,7 +65,5 @@ def main() -> None:
     registry.register(UpstreamMetrics(client=client))
     REGISTRY.register(PiholeCollector(registry))
     start_http_server(9617)
-
-
-if __name__ == "__main__":
-    main()
+    while True:
+        time.sleep(1)
