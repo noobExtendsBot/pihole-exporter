@@ -2,7 +2,7 @@
 [![Python](https://img.shields.io/badge/python-3.14-blue)](https://www.python.org/)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
-# pihole-exporter Prometheus exporter supporting v6
+# pihole Prometheus exporter supporting v6 REST API
 
 ![Dashboard](https://raw.githubusercontent.com/noobExtendsBot/pihole-exporter/refs/heads/master/dashboard.png)
 
@@ -10,6 +10,7 @@ This project is inspired by [eko/pihole-exporter](https://github.com/eko/pihole-
 
 The Docker image supports `amd64`, `arm64`, and `arm/v7`. Docker will pull the correct type own its own.
 
+An example setup can be found [here](https://github.com/noobExtendsBot/example-pi-hole-setup)
 ## Usage
 
 ### Docker
